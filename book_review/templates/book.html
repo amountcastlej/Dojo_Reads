@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Book and Review</title>
+    {% load static %}
+</head>
+<body>
+    <a href="/books">Home</a>
+    <a href="/logout">Logout</a>
+    <h3><a href="/books/{{book.id}}">{{book.title}}</a></h3>
+    <h4>Author: {{book.author.name}}</h4>
+    <h2>Reviews:</h2>
+    {% for review in book.reviews.all %}
+    <hr>
+    <h4>Rating: {% if review.rating == 5 %} <img src="{% static 'images/5stars.png'%}" alt="">{% elif review.rating == 4 %} 
+        <img src="{% static 'images/4stars.png'%}" alt="">{% elif review.rating == 3 %} <img
+            src="{% static 'images/3stars.png'%}" alt="">{% elif review.rating == 2 %} <img
+            src="{% static 'images/2stars.png'%}" alt="">{% elif review.rating == 1 %} <img
+            src="{% static 'images/1star.png'%}" alt="">{% endif %}</h4>
+    <p><a href="/users/{{review.user.id}}">{{review.user.name}}</a> says: {{review.description}}</p>
+    <p>{{review.book.created_at}}</p>
+    {% if request.session.user_id == review.user.id %}
+    <a href="/books/{{book.id}}/delete_review/{{review.id}}">Delete this Review</a>
+    {% endif %}
+    {% endfor %}
+    <form action="/books/{{book.id}}/review" method="POST">
+        {% csrf_token %}
+        <label for="review">Add a Review:</label>
+        <textarea name="review" id="review" cols="30" rows="10"></textarea>
+        <label for="rating">Rating:</label>
+        <select name="rating" id="rating">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+        </select>
+        <button>Submit Review</button>
+    </form>
+</body>
+</html>
+
+
